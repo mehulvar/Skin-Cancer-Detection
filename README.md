@@ -35,4 +35,4 @@ Tools and Libraries
 How to Run
 1. Clone this repository:
    ```bash
-   git clone https://github.com/mehulvar/skin-cancer-project.git
+   git clone https://github.com/mehulvar/skin-cancer-detection.git
