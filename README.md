@@ -30,8 +30,9 @@ Tools and Libraries
 - NumPy, Pandas, Matplotlib
 - scikit-learn
 - Google Colab
+- Visual Studio Code
 
 How to Run
 1. Clone this repository:
    ```bash
-   git clone https://github.com/yourusername/skin-cancer-project.git
+   git clone https://github.com/mehulvar/skin-cancer-project.git
