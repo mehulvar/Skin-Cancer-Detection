@@ -1,6 +1,6 @@
 Skin Cancer Project
 
-Overview
+Overview:
 This project uses a Convolutional Neural Network (CNN) to detect and classify different types of skin cancer from dermatoscopic images.  
 It was developed as part of a research project exploring how artificial intelligence can assist in early skin cancer detection and diagnosis.
 
