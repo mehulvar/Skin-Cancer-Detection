@@ -3,25 +3,25 @@
   "quantization": "int8",
   "metrics": {
     "testImages": 3080,
-    "accuracy": 0.9048701298701298,
-    "balancedAccuracy": 0.8058556139492155,
-    "hamBalancedAccuracy": 0.7525110626262748,
-    "hamAccuracy": 0.8141534391534392,
+    "accuracy": 0.9045454545454545,
+    "balancedAccuracy": 0.8172023065376165,
+    "hamBalancedAccuracy": 0.7664096189083108,
+    "hamAccuracy": 0.8108465608465608,
     "hamTestImages": 1512,
-    "dangerSensitivity": 0.8273615635179153,
-    "dangerSpecificity": 0.9495131626397404,
+    "dangerSensitivity": 0.8436482084690554,
+    "dangerSpecificity": 0.9466282005048684,
     "perClassRecall": {
-      "akiec": 0.5116279069767442,
+      "akiec": 0.6046511627906976,
       "bcc": 0.7956989247311828,
-      "bkl": 0.7603686635944701,
-      "df": 0.8181818181818182,
-      "mel": 0.7543859649122807,
-      "nv": 0.8558855885588559,
-      "vasc": 0.7714285714285715,
-      "other_skin": 0.9940119760479041,
-      "not_skin": 0.9911111111111112
+      "bkl": 0.7511520737327189,
+      "df": 0.7727272727272727,
+      "mel": 0.7660818713450293,
+      "nv": 0.845984598459846,
+      "vasc": 0.8285714285714286,
+      "other_skin": 0.9955089820359282,
+      "not_skin": 0.9944444444444445
     },
-    "modelMb": 15.3,
-    "architecture": "ConvNeXt-Nano (ImageNet-12k pretrained)"
+    "modelMb": 30.6,
+    "architecture": "2\u00d7 ConvNeXt-Nano (ImageNet-12k pretrained) ensemble"
   }
 }

@@ -32,7 +32,7 @@ from skinlesion.config import (
 from skinlesion.data import LesionDataset, build_transforms, load_split
 from skinlesion.evaluate import plot_confusion
 from skinlesion.metrics import summarize
-from skinlesion.model import ARCHITECTURE, load_checkpoint
+from skinlesion.model import ARCHITECTURE, load_deployable
 from skinlesion.calibrate import ADJUSTED_CHECKPOINT
 from skinlesion.train import BEST_CHECKPOINT
 
@@ -47,13 +47,26 @@ META_PATH = PROJECT_ROOT / "frontend" / "src" / "data" / "model-meta.json"
 ARCH_DISPLAY = {"convnext_nano.in12k_ft_in1k": "ConvNeXt-Nano (ImageNet-12k pretrained)"}
 
 
+def architecture_label(member_count: int) -> str:
+    """Human-readable model description shown on the website."""
+    if member_count < 1:
+        raise ValueError("member_count must be at least 1")
+    base = ARCH_DISPLAY.get(ARCHITECTURE, ARCHITECTURE)
+    return base if member_count == 1 else f"{member_count}× {base} ensemble"
+
+
+def member_count(checkpoint: Path) -> int:
+    state = torch.load(checkpoint, map_location="cpu", weights_only=True)
+    return len(state["members"]) if "members" in state else 1
+
+
 def deployed_checkpoint() -> Path:
     """The logit-adjusted checkpoint if calibration ran, else the raw best checkpoint."""
     return ADJUSTED_CHECKPOINT if ADJUSTED_CHECKPOINT.exists() else BEST_CHECKPOINT
 
 
 def export_fp32(path: Path, checkpoint: Path) -> None:
-    model = load_checkpoint(str(checkpoint), "cpu")
+    model = load_deployable(str(checkpoint), "cpu")
     dummy = torch.randn(1, 3, IMAGE_SIZE, IMAGE_SIZE)
     torch.onnx.export(
         model, dummy, str(path), input_names=["input"], output_names=["logits"],
@@ -88,13 +101,13 @@ def predict_onnx(path: Path, test_df: pd.DataFrame) -> tuple[np.ndarray, np.ndar
     return np.concatenate(probs), np.concatenate(targets)
 
 
-def headline(full: dict, ham: dict, model_mb: float) -> dict:
+def headline(full: dict, ham: dict, model_mb: float, architecture: str) -> dict:
     return {
         "testImages": full["n"], "accuracy": full["accuracy"], "balancedAccuracy": full["balanced_accuracy"],
         "hamBalancedAccuracy": ham["ham_balanced_accuracy"], "hamAccuracy": ham["accuracy"], "hamTestImages": ham["n"],
         "dangerSensitivity": full["danger"]["sensitivity"], "dangerSpecificity": full["danger"]["specificity"],
         "perClassRecall": {k: v["recall"] for k, v in full["per_class"].items()},
-        "modelMb": round(model_mb, 1), "architecture": ARCH_DISPLAY.get(ARCHITECTURE, ARCHITECTURE),
+        "modelMb": round(model_mb, 1), "architecture": architecture,
     }
 
 
@@ -125,7 +138,8 @@ def main() -> None:
     FRONTEND_MODEL_DIR.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(path, FRONTEND_MODEL_DIR / ONNX_NAME)
     plot_confusion(full["confusion_matrix"], FRONTEND_MODEL_DIR / "confusion_matrix.png")
-    meta = {"imageSize": IMAGE_SIZE, "quantization": chosen, "metrics": headline(full, ham, path.stat().st_size / 1e6)}
+    meta = {"imageSize": IMAGE_SIZE, "quantization": chosen, "metrics": headline(
+        full, ham, path.stat().st_size / 1e6, architecture_label(member_count(checkpoint)))}
     META_PATH.write_text(json.dumps(meta, indent=2) + "\n")
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
     (REPORTS_DIR / "deployed_metrics.json").write_text(json.dumps({"full": full, "ham": ham, "variant": chosen}, indent=2))

@@ -130,6 +130,61 @@ def test_model_forward_shape():
     assert out.shape == (1, NUM_CLASSES)
 
 
+class _ConstantLogits(torch.nn.Module):
+    def __init__(self, logits: list[float]) -> None:
+        super().__init__()
+        self.register_buffer("logits", torch.tensor(logits))
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        return self.logits.expand(x.shape[0], -1)
+
+
+def test_ensemble_outputs_log_of_mean_probability():
+    from skinlesion.model import ProbabilityEnsemble
+    a, b = [2.0, 0.0, -1.0], [-1.0, 1.0, 0.5]
+    ensemble = ProbabilityEnsemble([_ConstantLogits(a), _ConstantLogits(b)])
+    out = ensemble(torch.zeros(2, 3, 4, 4))
+    expected = (torch.softmax(torch.tensor(a), 0) + torch.softmax(torch.tensor(b), 0)) / 2
+    assert out.shape == (2, 3)
+    # softmax(output) recovers the averaged probabilities, which is what the website computes.
+    assert torch.allclose(torch.softmax(out, 1)[0], expected, atol=1e-6)
+
+
+def test_single_member_ensemble_preserves_probabilities():
+    from skinlesion.model import ProbabilityEnsemble
+    logits = [0.3, 2.0, -0.5]
+    out = ProbabilityEnsemble([_ConstantLogits(logits)])(torch.zeros(1, 3, 4, 4))
+    assert torch.allclose(torch.softmax(out, 1)[0], torch.softmax(torch.tensor(logits), 0), atol=1e-6)
+    with pytest.raises(ValueError):
+        ProbabilityEnsemble([])
+
+
+def test_load_deployable_handles_single_and_ensemble_checkpoints(tmp_path):
+    from skinlesion.model import ARCHITECTURE, ProbabilityEnsemble, build_model, load_deployable
+    state = build_model(pretrained=False).state_dict()
+    single, multi, bad = tmp_path / "single.pt", tmp_path / "multi.pt", tmp_path / "bad.pt"
+    torch.save({"model": state, "architecture": ARCHITECTURE}, single)
+    torch.save({"members": [state, state], "architecture": ARCHITECTURE}, multi)
+    torch.save({"architecture": ARCHITECTURE}, bad)
+    assert not isinstance(load_deployable(str(single)), ProbabilityEnsemble)
+    loaded = load_deployable(str(multi))
+    assert isinstance(loaded, ProbabilityEnsemble) and len(loaded.members) == 2
+    with pytest.raises(ValueError):
+        load_deployable(str(bad))
+
+
+def test_fold_adjustment_shifts_classifier_bias_only():
+    from skinlesion.calibrate import fold_adjustment
+    bias = torch.zeros(NUM_CLASSES)
+    state = {"head.fc.bias": bias, "head.fc.weight": torch.ones(NUM_CLASSES, 2)}
+    shift = np.arange(NUM_CLASSES, dtype=np.float64)
+    folded = fold_adjustment(state, shift)
+    assert torch.allclose(folded["head.fc.bias"], torch.arange(NUM_CLASSES, dtype=torch.float32))
+    assert torch.equal(state["head.fc.bias"], torch.zeros(NUM_CLASSES))  # input left untouched
+    with pytest.raises(RuntimeError):
+        fold_adjustment({"head.fc.bias": torch.zeros(3)}, shift)
+
+
 def test_robust_choice_avoids_cliff_edge():
     from skinlesion.calibrate import robust_choice
     taus = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5]
@@ -180,3 +235,24 @@ def test_dataset_and_one_training_epoch_on_synthetic_images(tmp_path):
     assert probs.shape == (NUM_CLASSES, NUM_CLASSES)
     assert np.allclose(probs.sum(1), 1, atol=1e-5)
     assert list(targets) == list(range(NUM_CLASSES))
+
+
+def test_architecture_label_names_ensembles():
+    from skinlesion.export import architecture_label
+    assert "ensemble" not in architecture_label(1)
+    assert architecture_label(2).startswith("2×") and architecture_label(2).endswith("ensemble")
+    with pytest.raises(ValueError):
+        architecture_label(0)
+
+
+def test_clear_cut_keeps_confident_correct_predictions_per_class():
+    from skinlesion.samples import clear_cut
+    preds = pd.DataFrame({
+        "label": ["mel", "mel", "mel", "nv", "nv", "nv"],
+        "pred": ["mel", "mel", "nv", "nv", "nv", "nv"],
+        "confidence": [0.3, 0.8, 0.9, 0.3, 0.35, 0.4],
+    })
+    kept = clear_cut(preds)
+    assert (kept.label == kept.pred).all()  # the wrong mel→nv row is excluded despite 0.9
+    assert sorted(kept[kept.label == "mel"].confidence) == [0.8]  # median of 0.3/0.8 is 0.55
+    assert sorted(kept[kept.label == "nv"].confidence) == [0.35, 0.4]  # class-relative threshold

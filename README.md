@@ -18,29 +18,29 @@ training). The website shows exactly these metrics, computed from the deployed
 
 | ISIC 2018 test set (7 lesion classes) | Original CNN | SkinSight |
 |---|---|---|
-| Accuracy | 66.3% | 81.4% |
-| Balanced accuracy (official ISIC metric) | 33.3% | 75.3% |
+| Accuracy | 66.3% | 81.1% |
+| Balanced accuracy (official ISIC metric) | 33.3% | 76.6% |
 
 | Full 9-class test set (3,080 images) | |
 |---|---|
 | Accuracy | 90.5% |
-| Balanced accuracy | 80.6% |
-| Malignant/precancerous sensitivity | 82.7% |
-| Malignant/precancerous specificity | 95.0% |
+| Balanced accuracy | 81.7% |
+| Malignant/precancerous sensitivity | 84.4% |
+| Malignant/precancerous specificity | 94.7% |
 
 Per-class recall on the test set:
 
 | Class | Recall |
 |---|---|
-| Actinic keratosis / Bowen's (precancerous) | 51.2% |
+| Actinic keratosis / Bowen's (precancerous) | 60.5% |
 | Basal cell carcinoma | 79.6% |
-| Benign keratosis | 76.0% |
-| Dermatofibroma | 81.8% |
-| Melanoma | 75.4% |
-| Melanocytic nevus (mole) | 85.6% |
-| Vascular lesion | 77.1% |
-| Other skin condition (SCIN) | 99.4% |
-| Not skin | 99.1% |
+| Benign keratosis | 75.1% |
+| Dermatofibroma | 77.3% |
+| Melanoma | 76.6% |
+| Melanocytic nevus (mole) | 84.6% |
+| Vascular lesion | 82.9% |
+| Other skin condition (SCIN) | 99.6% |
+| Not skin | 99.4% |
 
 The "Original CNN" column re-trains the exact architecture from
 `training/legacy/CNN.py` (3 conv layers, 128 px, Adam, 10 epochs) on the same
@@ -66,12 +66,12 @@ same lesion could appear in both training and validation.
 
 | | Original | Now |
 |---|---|---|
-| Model | 3-layer CNN from scratch, 128 px | ImageNet-12k pretrained ConvNeXt-Nano, fine-tuned at 224 px |
+| Model | 3-layer CNN from scratch, 128 px | Ensemble of two ImageNet-12k pretrained ConvNeXt-Nano runs, fine-tuned at 256 px |
 | Splits | Random 80/20; rotated duplicates leaked across splits | Grouped by `lesion_id`; official ISIC 2018 test set held out |
-| Imbalance | None (67 % of images are moles) | Square-root class-balanced sampling + label smoothing |
+| Imbalance | None (67 % of images are moles) | Class-balanced sampling (count^-0.75), label smoothing, validation-tuned post-hoc logit adjustment |
 | Augmentation | Offline rotations of 3 classes | Online random crops, flips, rotations, colour jitter, blur, erasing |
 | Out-of-scope inputs | Always predicts a lesion | `other_skin` + `not_skin` classes |
-| Deployment | — | Next.js site on Vercel, in-browser WASM inference with flip TTA |
+| Deployment | — | Next.js site on Vercel, in-browser WASM inference (2-model ensemble in one ONNX graph, int8, flip TTA) |
 
 ## Data
 
@@ -95,6 +95,7 @@ training/
     data.py           dataset, transforms, balanced sampler
     model.py          ConvNeXt-Nano via timm
     train.py          fine-tuning loop (AMP on Apple MPS / CUDA)
+    calibrate.py      2-run ensemble + validation-tuned logit adjustment
     evaluate.py       test metrics, confusion matrix, per-image predictions
     export.py         ONNX export, int8 quantisation gate, publish to frontend
     samples.py        pick held-out test images as website samples
@@ -123,6 +124,9 @@ python -m skinlesion.prepare             # manifest + cache
 
 # 2. Train, evaluate, export
 python -m skinlesion.train --epochs 25   # ~1 h on an Apple M-series GPU
+mv checkpoints/best.pt checkpoints/best_run1.pt
+python -m skinlesion.train --epochs 25   # second, independent run
+python -m skinlesion.calibrate           # ensemble both runs, tune logit adjustment on val
 python -m skinlesion.evaluate
 python -m skinlesion.baseline
 python -m skinlesion.export

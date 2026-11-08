@@ -1,5 +1,5 @@
 import { classByKey } from "@/lib/classes";
-import { METRICS, percent } from "@/lib/content";
+import { METRICS, MODEL_IMAGE_SIZE, percent } from "@/lib/content";
 import baseline from "@/data/baseline.json";
 
 interface BaselineMetrics {
@@ -94,7 +94,7 @@ export function Performance() {
                   <tr>
                     <td className="py-2.5 pr-4 text-cream/80">Architecture</td>
                     <td className="py-2.5 pr-4">3-layer CNN, 128 px</td>
-                    <td className="py-2.5">ConvNeXt-Nano, 224 px</td>
+                    <td className="py-2.5">2× ConvNeXt-Nano ensemble, {MODEL_IMAGE_SIZE} px</td>
                   </tr>
                 </tbody>
               </table>

@@ -3,7 +3,9 @@
 Requires training/reports/deployed_predictions.csv (written by `python -m skinlesion.export`),
 so samples are guaranteed to be classified correctly by the exact model the website ships.
 Samples are drawn at random (fixed seed) from test images the model classifies
-correctly, so the demo reflects behaviour on unseen data; the website's
+correctly and clearly (confidence at or above its class's median among correct
+predictions), so borderline cases can't flip from tiny browser-vs-PIL resizing
+differences. The demo reflects behaviour on unseen data; the website's
 Performance section reports the full, unfiltered test metrics.
 
 Usage:  python -m skinlesion.samples
@@ -30,8 +32,15 @@ NOT_SKIN_PER_SOURCE = {"imagenette": 4, "dtd": 2}
 SOURCE_NAMES = {"ham10000": "ISIC 2018 test set", "scin": "SCIN dataset", "imagenette": "Imagenette", "dtd": "Textures (DTD)"}
 
 
-def choose(preds: pd.DataFrame) -> pd.DataFrame:
+def clear_cut(preds: pd.DataFrame) -> pd.DataFrame:
+    """Correct predictions whose confidence is at least the median for their class."""
     correct = preds[preds.label == preds.pred]
+    median = correct.groupby("label").confidence.transform("median")
+    return correct[correct.confidence >= median]
+
+
+def choose(preds: pd.DataFrame) -> pd.DataFrame:
+    correct = clear_cut(preds)
     picks = [
         correct[correct.label == label].sample(n, random_state=SEED)
         for label, n in PER_CLASS.items()

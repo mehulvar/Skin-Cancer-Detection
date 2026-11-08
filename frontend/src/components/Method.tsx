@@ -14,7 +14,7 @@ const STEPS = [
   {
     letter: "T",
     title: "Transfer learning",
-    body: "An ImageNet-pretrained ConvNeXt-Nano is fine-tuned with heavy augmentation (rotations, flips, colour jitter, random crops), label smoothing, square-root class-balanced sampling and a cosine learning-rate schedule.",
+    body: "An ImageNet-pretrained ConvNeXt-Nano is fine-tuned with heavy augmentation (rotations, flips, colour jitter, random crops), label smoothing, class-balanced sampling and a cosine learning-rate schedule. Two independently trained runs are averaged as an ensemble, and a validation-tuned logit adjustment rebalances decisions toward rare lesion types.",
   },
   {
     letter: "B",
