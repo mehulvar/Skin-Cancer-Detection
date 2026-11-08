@@ -1,6 +1,6 @@
 # SkinSight — Skin Lesion Classification
 
-**Live demo:** __LIVE_URL__
+**Live demo:** https://skinsight-ruddy.vercel.app
 
 SkinSight classifies dermoscopic images of skin lesions into the seven HAM10000
 categories, and also recognises **non-cancerous skin conditions** and **images
@@ -151,6 +151,7 @@ npm install
 npm run dev          # http://localhost:3000
 npm test             # unit tests (vitest)
 npm run test:e2e     # Playwright against a production build
+E2E_BASE_URL=https://skinsight-ruddy.vercel.app npm run test:e2e   # same suite against the live site
 ```
 
 The Vercel project uses `frontend/` as its root directory and deploys on every
