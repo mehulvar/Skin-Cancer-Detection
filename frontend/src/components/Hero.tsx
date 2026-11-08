@@ -45,7 +45,7 @@ export function Hero() {
           )}
         </div>
 
-        <div className="relative mx-auto grid w-full max-w-md grid-cols-2 gap-4" aria-hidden>
+        <div className="relative mx-auto grid w-full max-w-xs grid-cols-2 gap-3 md:max-w-md md:gap-4" aria-hidden>
           <div className="arch col-span-1 row-span-2 aspect-[3/5] overflow-hidden bg-linen">
             {images[0] && (
               // eslint-disable-next-line @next/next/no-img-element -- local dermoscopy sample
