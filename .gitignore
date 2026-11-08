@@ -5,7 +5,7 @@ __pycache__/
 .pytest_cache/
 .coverage
 htmlcov/
-data/
+/data/
 training/checkpoints/
 training/runs/
 node_modules/

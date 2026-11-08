@@ -1,0 +1,85 @@
+@import "tailwindcss";
+
+:root {
+  --cream: #fffcf8;
+  --sand: #f6f1eb;
+  --linen: #ede5dc;
+  --ink: #1e305e;
+  --ink-soft: #3b4a72;
+  --text: #28292a;
+  --muted: #6f6762;
+  --line: #e3dad1;
+  --clay: #c49b84;
+  --clay-deep: #a57459;
+  --cocoa: #684432;
+
+  --sev-malignant: #b4483a;
+  --sev-precancerous: #c07a1f;
+  --sev-benign: #4f7a5a;
+  --sev-nonlesion: #5d6f9a;
+  --sev-invalid: #85807b;
+}
+
+@theme inline {
+  --color-cream: var(--cream);
+  --color-sand: var(--sand);
+  --color-linen: var(--linen);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-clay: var(--clay);
+  --color-clay-deep: var(--clay-deep);
+  --color-cocoa: var(--cocoa);
+  --color-sev-malignant: var(--sev-malignant);
+  --color-sev-precancerous: var(--sev-precancerous);
+  --color-sev-benign: var(--sev-benign);
+  --color-sev-nonlesion: var(--sev-nonlesion);
+  --color-sev-invalid: var(--sev-invalid);
+  --font-serif: var(--font-display), "Times New Roman", serif;
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+}
+
+body {
+  background: var(--cream);
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--clay);
+  color: var(--cream);
+}
+
+.eyebrow {
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--clay-deep);
+  font-weight: 500;
+}
+
+.arch {
+  border-radius: 999px 999px 1.5rem 1.5rem;
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+
+.rise {
+  animation: rise 0.6s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .rise { animation: none; }
+}

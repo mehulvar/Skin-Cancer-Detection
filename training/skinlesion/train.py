@@ -27,15 +27,16 @@ log = logging.getLogger(__name__)
 LABEL_SMOOTHING = 0.1
 WEIGHT_DECAY = 0.02
 WARMUP_EPOCHS = 1
+GRAD_CLIP_NORM = 2.0
 NUM_WORKERS = 8
 BEST_CHECKPOINT = CHECKPOINT_DIR / "best.pt"
 
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser()
-    p.add_argument("--epochs", type=int, default=25)
+    p.add_argument("--epochs", type=int, default=30)
     p.add_argument("--batch-size", type=int, default=32)
-    p.add_argument("--lr", type=float, default=5e-4)
+    p.add_argument("--lr", type=float, default=2e-4)
     p.add_argument("--limit", type=int, default=0, help="debug: cap rows per split")
     return p.parse_args()
 
@@ -58,15 +59,20 @@ def predict(model: nn.Module, loader: DataLoader, device: torch.device) -> tuple
     return np.concatenate(probs), np.concatenate(targets)
 
 
-def train_one_epoch(model, loader, optimizer, scheduler, criterion, device) -> float:
+def train_one_epoch(model, loader, optimizer, scheduler, criterion, device, scaler) -> float:
     model.train()
+    use_amp = device.type in ("mps", "cuda")
     total, count = 0.0, 0
     for images, labels in loader:
         images, labels = images.to(device, non_blocking=True), labels.to(device, non_blocking=True)
-        loss = criterion(model(images), labels)
+        with torch.autocast(device.type, dtype=torch.float16, enabled=use_amp):
+            loss = criterion(model(images), labels)
         optimizer.zero_grad(set_to_none=True)
-        loss.backward()
-        optimizer.step()
+        scaler.scale(loss).backward()
+        scaler.unscale_(optimizer)
+        nn.utils.clip_grad_norm_(model.parameters(), GRAD_CLIP_NORM)
+        scaler.step(optimizer)
+        scaler.update()
         scheduler.step()
         total += loss.item() * len(labels)
         count += len(labels)
@@ -90,7 +96,8 @@ def main() -> None:
     val_loader = DataLoader(val_ds, batch_size=args.batch_size * 2, shuffle=False, **loader_kw)
     log.info("device=%s train=%d val=%d", device, len(train_ds), len(val_ds))
 
-    model = build_model(pretrained=True).to(device).to(memory_format=torch.channels_last)
+    model = build_model(pretrained=True).to(device)
+    scaler = torch.amp.GradScaler(device.type, enabled=device.type in ("mps", "cuda"))
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=WEIGHT_DECAY)
     steps_per_epoch = len(train_loader)
     total_steps = steps_per_epoch * args.epochs
@@ -103,7 +110,7 @@ def main() -> None:
     best_score, history = -1.0, []
     for epoch in range(1, args.epochs + 1):
         start = time.time()
-        train_loss = train_one_epoch(model, train_loader, optimizer, scheduler, criterion, device)
+        train_loss = train_one_epoch(model, train_loader, optimizer, scheduler, criterion, device, scaler)
         probs, targets = predict(model, val_loader, device)
         summary = summarize(targets, probs.argmax(1))
         # Select on the mean of HAM balanced accuracy (the hard part) and overall balanced accuracy.

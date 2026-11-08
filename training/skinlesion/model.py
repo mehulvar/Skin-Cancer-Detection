@@ -8,9 +8,9 @@ from torch import nn
 
 from skinlesion.config import NUM_CLASSES
 
-ARCHITECTURE = "efficientnet_b2"
-DROP_RATE = 0.3
-DROP_PATH_RATE = 0.2
+ARCHITECTURE = "convnext_nano.in12k_ft_in1k"
+DROP_RATE = 0.2
+DROP_PATH_RATE = 0.1
 
 
 def build_model(pretrained: bool = True, architecture: str = ARCHITECTURE) -> nn.Module:

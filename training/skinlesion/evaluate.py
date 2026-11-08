@@ -70,6 +70,9 @@ def main() -> None:
 
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
     (REPORTS_DIR / "test_metrics.json").write_text(json.dumps(report, indent=2))
+    test_df.assign(
+        pred=[CLASS_KEYS[i] for i in tta.argmax(1)], confidence=tta.max(1)
+    ).to_csv(REPORTS_DIR / "test_predictions.csv", index=False)
     plot_confusion(report["flip_tta"]["confusion_matrix"], REPORTS_DIR / "confusion_matrix.png")
     for name in ("plain", "flip_tta"):
         r = report[name]
