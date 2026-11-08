@@ -1,0 +1,16 @@
+.DS_Store
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.coverage
+htmlcov/
+data/
+training/checkpoints/
+training/runs/
+node_modules/
+.next/
+.vercel/
+*.pt
+*.pth
+*.h5
