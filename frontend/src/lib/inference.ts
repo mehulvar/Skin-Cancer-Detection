@@ -5,6 +5,7 @@
 
 import type { InferenceSession } from "onnxruntime-web";
 import { CLASSES } from "./classes";
+import { MODEL_IMAGE_SIZE } from "./content";
 import { averageProbabilities, interpret, softmax, type Verdict } from "./interpret";
 import { flipHorizontal, imageToTensor, type PreprocessConfig } from "./preprocess";
 
@@ -13,7 +14,7 @@ export const WASM_URL = "/ort/ort-wasm-simd-threaded.wasm";
 const MAX_THREADS = 4;
 
 export const PREPROCESS: PreprocessConfig = {
-  size: 224,
+  size: MODEL_IMAGE_SIZE,
   mean: [0.485, 0.456, 0.406],
   std: [0.229, 0.224, 0.225],
 };

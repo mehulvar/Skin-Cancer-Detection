@@ -46,9 +46,18 @@ export function sampleGroup(sample: Sample): SampleGroup {
   return GROUP_BY_CATEGORY[classByKey(sample.label).category];
 }
 
+interface ModelMeta {
+  imageSize?: number;
+  metrics: HeadlineMetrics | null;
+}
+
+const META = metaJson as ModelMeta;
+const DEFAULT_IMAGE_SIZE = 224;
+
 export const SAMPLES: readonly Sample[] = samplesJson as Sample[];
-export const METRICS: HeadlineMetrics | null =
-  (metaJson as { metrics: HeadlineMetrics | null }).metrics ?? null;
+export const METRICS: HeadlineMetrics | null = META.metrics ?? null;
+/** Input resolution the exported model was trained at (written by training/skinlesion/export.py). */
+export const MODEL_IMAGE_SIZE: number = META.imageSize ?? DEFAULT_IMAGE_SIZE;
 
 export function percent(value: number, digits = 1): string {
   return `${(value * 100).toFixed(digits)}%`;

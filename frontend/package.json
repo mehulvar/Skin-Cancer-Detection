@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
+    "lint": "eslint --ignore-pattern 'public/ort/**'",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "predev": "node scripts/copy-ort.mjs",

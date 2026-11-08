@@ -1,6 +1,7 @@
 """Pick held-out test images as website samples and copy them into the frontend.
 
-Requires training/reports/test_predictions.csv (written by `python -m skinlesion.evaluate`).
+Requires training/reports/deployed_predictions.csv (written by `python -m skinlesion.export`),
+so samples are guaranteed to be classified correctly by the exact model the website ships.
 Samples are drawn at random (fixed seed) from test images the model classifies
 correctly, so the demo reflects behaviour on unseen data; the website's
 Performance section reports the full, unfiltered test metrics.
@@ -16,7 +17,8 @@ import shutil
 
 import pandas as pd
 
-from skinlesion.config import CACHE_DIR, PROJECT_ROOT, REPORTS_DIR, SEED
+from skinlesion.config import CACHE_DIR, PROJECT_ROOT, SEED
+from skinlesion.export import DEPLOYED_PREDICTIONS
 
 log = logging.getLogger(__name__)
 
@@ -41,7 +43,7 @@ def choose(preds: pd.DataFrame) -> pd.DataFrame:
 
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(message)s")
-    preds = pd.read_csv(REPORTS_DIR / "test_predictions.csv")
+    preds = pd.read_csv(DEPLOYED_PREDICTIONS)
     chosen = choose(preds)
 
     if SAMPLES_DIR.exists():

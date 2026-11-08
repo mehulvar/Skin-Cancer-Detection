@@ -15,7 +15,7 @@ from torchvision import transforms as T
 from skinlesion.config import CACHE_DIR, CLASS_TO_INDEX, IMAGE_SIZE, IMAGENET_MEAN, IMAGENET_STD
 
 # Sampling weight ∝ count^-SAMPLING_POWER (0 = natural distribution, 1 = fully balanced).
-SAMPLING_POWER = 0.5
+SAMPLING_POWER = 0.75
 
 
 def center_square_resize(img: Image.Image, size: int = IMAGE_SIZE) -> Image.Image:
