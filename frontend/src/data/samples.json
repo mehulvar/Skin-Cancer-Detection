@@ -1,0 +1,200 @@
+[
+  {
+    "id": "akiec-00",
+    "src": "/samples/akiec-00.jpg",
+    "label": "akiec",
+    "source": "ISIC 2018 test set"
+  },
+  {
+    "id": "akiec-01",
+    "src": "/samples/akiec-01.jpg",
+    "label": "akiec",
+    "source": "ISIC 2018 test set"
+  },
+  {
+    "id": "akiec-02",
+    "src": "/samples/akiec-02.jpg",
+    "label": "akiec",
+    "source": "ISIC 2018 test set"
+  },
+  {
+    "id": "bcc-03",
+    "src": "/samples/bcc-03.jpg",
+    "label": "bcc",
+    "source": "ISIC 2018 test set"
+  },
+  {
+    "id": "bcc-04",
+    "src": "/samples/bcc-04.jpg",
+    "label": "bcc",
+    "source": "ISIC 2018 test set"
+  },
+  {
+    "id": "bcc-05",
+    "src": "/samples/bcc-05.jpg",
+    "label": "bcc",
+    "source": "ISIC 2018 test set"
+  },
+  {
+    "id": "bkl-06",
+    "src": "/samples/bkl-06.jpg",
+    "label": "bkl",
+    "source": "ISIC 2018 test set"
+  },
+  {
+    "id": "bkl-07",
+    "src": "/samples/bkl-07.jpg",
+    "label": "bkl",
+    "source": "ISIC 2018 test set"
+  },
+  {
+    "id": "bkl-08",
+    "src": "/samples/bkl-08.jpg",
+    "label": "bkl",
+    "source": "ISIC 2018 test set"
+  },
+  {
+    "id": "df-09",
+    "src": "/samples/df-09.jpg",
+    "label": "df",
+    "source": "ISIC 2018 test set"
+  },
+  {
+    "id": "df-10",
+    "src": "/samples/df-10.jpg",
+    "label": "df",
+    "source": "ISIC 2018 test set"
+  },
+  {
+    "id": "df-11",
+    "src": "/samples/df-11.jpg",
+    "label": "df",
+    "source": "ISIC 2018 test set"
+  },
+  {
+    "id": "mel-12",
+    "src": "/samples/mel-12.jpg",
+    "label": "mel",
+    "source": "ISIC 2018 test set"
+  },
+  {
+    "id": "mel-13",
+    "src": "/samples/mel-13.jpg",
+    "label": "mel",
+    "source": "ISIC 2018 test set"
+  },
+  {
+    "id": "mel-14",
+    "src": "/samples/mel-14.jpg",
+    "label": "mel",
+    "source": "ISIC 2018 test set"
+  },
+  {
+    "id": "mel-15",
+    "src": "/samples/mel-15.jpg",
+    "label": "mel",
+    "source": "ISIC 2018 test set"
+  },
+  {
+    "id": "nv-16",
+    "src": "/samples/nv-16.jpg",
+    "label": "nv",
+    "source": "ISIC 2018 test set"
+  },
+  {
+    "id": "nv-17",
+    "src": "/samples/nv-17.jpg",
+    "label": "nv",
+    "source": "ISIC 2018 test set"
+  },
+  {
+    "id": "nv-18",
+    "src": "/samples/nv-18.jpg",
+    "label": "nv",
+    "source": "ISIC 2018 test set"
+  },
+  {
+    "id": "vasc-19",
+    "src": "/samples/vasc-19.jpg",
+    "label": "vasc",
+    "source": "ISIC 2018 test set"
+  },
+  {
+    "id": "vasc-20",
+    "src": "/samples/vasc-20.jpg",
+    "label": "vasc",
+    "source": "ISIC 2018 test set"
+  },
+  {
+    "id": "vasc-21",
+    "src": "/samples/vasc-21.jpg",
+    "label": "vasc",
+    "source": "ISIC 2018 test set"
+  },
+  {
+    "id": "other_skin-22",
+    "src": "/samples/other_skin-22.jpg",
+    "label": "other_skin",
+    "source": "SCIN dataset"
+  },
+  {
+    "id": "other_skin-23",
+    "src": "/samples/other_skin-23.jpg",
+    "label": "other_skin",
+    "source": "SCIN dataset"
+  },
+  {
+    "id": "other_skin-24",
+    "src": "/samples/other_skin-24.jpg",
+    "label": "other_skin",
+    "source": "SCIN dataset"
+  },
+  {
+    "id": "other_skin-25",
+    "src": "/samples/other_skin-25.jpg",
+    "label": "other_skin",
+    "source": "SCIN dataset"
+  },
+  {
+    "id": "other_skin-26",
+    "src": "/samples/other_skin-26.jpg",
+    "label": "other_skin",
+    "source": "SCIN dataset"
+  },
+  {
+    "id": "not_skin-27",
+    "src": "/samples/not_skin-27.jpg",
+    "label": "not_skin",
+    "source": "Imagenette"
+  },
+  {
+    "id": "not_skin-28",
+    "src": "/samples/not_skin-28.jpg",
+    "label": "not_skin",
+    "source": "Imagenette"
+  },
+  {
+    "id": "not_skin-29",
+    "src": "/samples/not_skin-29.jpg",
+    "label": "not_skin",
+    "source": "Imagenette"
+  },
+  {
+    "id": "not_skin-30",
+    "src": "/samples/not_skin-30.jpg",
+    "label": "not_skin",
+    "source": "Imagenette"
+  },
+  {
+    "id": "not_skin-31",
+    "src": "/samples/not_skin-31.jpg",
+    "label": "not_skin",
+    "source": "Textures (DTD)"
+  },
+  {
+    "id": "not_skin-32",
+    "src": "/samples/not_skin-32.jpg",
+    "label": "not_skin",
+    "source": "Textures (DTD)"
+  }
+]

@@ -18,19 +18,29 @@ training). The website shows exactly these metrics, computed from the deployed
 
 | ISIC 2018 test set (7 lesion classes) | Original CNN | SkinSight |
 |---|---|---|
-| Accuracy | __BASE_ACC__ | __NEW_HAM_ACC__ |
-| Balanced accuracy (official ISIC metric) | __BASE_BAL__ | __NEW_HAM_BAL__ |
+| Accuracy | 66.3% | 81.4% |
+| Balanced accuracy (official ISIC metric) | 33.3% | 75.3% |
 
-| Full 9-class test set (__N_TEST__ images) | |
+| Full 9-class test set (3,080 images) | |
 |---|---|
-| Accuracy | __ACC__ |
-| Balanced accuracy | __BAL__ |
-| Malignant/precancerous sensitivity | __SENS__ |
-| Malignant/precancerous specificity | __SPEC__ |
+| Accuracy | 90.5% |
+| Balanced accuracy | 80.6% |
+| Malignant/precancerous sensitivity | 82.7% |
+| Malignant/precancerous specificity | 95.0% |
 
 Per-class recall on the test set:
 
-__RECALL_TABLE__
+| Class | Recall |
+|---|---|
+| Actinic keratosis / Bowen's (precancerous) | 51.2% |
+| Basal cell carcinoma | 79.6% |
+| Benign keratosis | 76.0% |
+| Dermatofibroma | 81.8% |
+| Melanoma | 75.4% |
+| Melanocytic nevus (mole) | 85.6% |
+| Vascular lesion | 77.1% |
+| Other skin condition (SCIN) | 99.4% |
+| Not skin | 99.1% |
 
 The "Original CNN" column re-trains the exact architecture from
 `training/legacy/CNN.py` (3 conv layers, 128 px, Adam, 10 epochs) on the same

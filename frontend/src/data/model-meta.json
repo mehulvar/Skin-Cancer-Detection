@@ -1,1 +1,27 @@
-{"metrics": null}
+{
+  "imageSize": 256,
+  "quantization": "int8",
+  "metrics": {
+    "testImages": 3080,
+    "accuracy": 0.9048701298701298,
+    "balancedAccuracy": 0.8058556139492155,
+    "hamBalancedAccuracy": 0.7525110626262748,
+    "hamAccuracy": 0.8141534391534392,
+    "hamTestImages": 1512,
+    "dangerSensitivity": 0.8273615635179153,
+    "dangerSpecificity": 0.9495131626397404,
+    "perClassRecall": {
+      "akiec": 0.5116279069767442,
+      "bcc": 0.7956989247311828,
+      "bkl": 0.7603686635944701,
+      "df": 0.8181818181818182,
+      "mel": 0.7543859649122807,
+      "nv": 0.8558855885588559,
+      "vasc": 0.7714285714285715,
+      "other_skin": 0.9940119760479041,
+      "not_skin": 0.9911111111111112
+    },
+    "modelMb": 15.3,
+    "architecture": "ConvNeXt-Nano (ImageNet-12k pretrained)"
+  }
+}
